@@ -1,26 +1,26 @@
-var os = require('os')
-var path = require('path')
-var chalk = require('chalk')
-var yyyymmdd = require('yyyy-mm-dd')
-var stripAnsi = require('strip-ansi')
+const os = require('os')
+const path = require('path')
+const chalk = require('chalk')
+const yyyymmdd = require('yyyy-mm-dd')
+const stripAnsi = require('strip-ansi')
 
-var PADDING = '        '
-var SEPARATOR = os.EOL + os.EOL
-var NEXT_LINE = os.EOL === '\n' ? '\r\v' : os.EOL
+const PADDING = '        '
+const SEPARATOR = os.EOL + os.EOL
+const NEXT_LINE = os.EOL === '\n' ? '\r\v' : os.EOL
 
 function time (c) {
   return c.dim('at ' + yyyymmdd.withTime(module.exports.now()))
 }
 
 function rightPag (str, length) {
-  var add = length - stripAnsi(str).length
-  for (var i = 0; i < add; i++) str += ' '
+  const add = length - stripAnsi(str).length
+  for (let i = 0; i < add; i++) str += ' '
   return str
 }
 
 function labeled (c, label, color, message) {
-  var labelFormat = c.bold[color].bgBlack.inverse
-  var messageFormat = c.bold[color]
+  const labelFormat = c.bold[color].bgBlack.inverse
+  const messageFormat = c.bold[color]
 
   return rightPag(labelFormat(label), 8) +
          messageFormat(message) + ' ' +
@@ -30,17 +30,17 @@ function labeled (c, label, color, message) {
 module.exports = {
 
   params: function params (c, fields) {
-    var max = 0
-    var current
-    for (var i = 0; i < fields.length; i++) {
+    let max = 0
+    let current
+    for (let i = 0; i < fields.length; i++) {
       current = fields[i][0].length + 2
       if (current > max) max = current
     }
     return fields.map(function (field) {
-      var start = PADDING + rightPag(field[0] + ': ', max)
+      const start = PADDING + rightPag(field[0] + ': ', max)
       if (field[0] === 'Node ID') {
-        var pos = field[1].indexOf(':')
-        var id, random
+        const pos = field[1].indexOf(':')
+        let id, random
         if (pos === -1) {
           id = ''
           random = field[1]
@@ -96,7 +96,7 @@ module.exports = {
 
     return err.stack.split('\n').slice(1).map(function (i) {
       i = i.replace(/^\s*/, PADDING)
-      var match = i.match(/(\s+at [^(]+ \()([^)]+)\)/)
+      const match = i.match(/(\s+at [^(]+ \()([^)]+)\)/)
       if (!match || match[2].indexOf(root) !== 0) {
         return c.red(i)
       } else {

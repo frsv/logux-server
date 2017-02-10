@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var Server = require('../../server')
+const Server = require('../../server')
 
 new Server({
   nodeId: 'server',
@@ -10,7 +10,7 @@ new Server({
 
 new Promise(function (resolve, reject) {
   setTimeout(function () {
-    var error = new Error('Test Error')
+    const error = new Error('Test Error')
     error.stack = error.stack.split('\n')[0] + '\nfake stacktrace'
     reject(error)
   }, 10)

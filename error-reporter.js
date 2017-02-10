@@ -1,4 +1,4 @@
-var reporter = require('./reporter')
+const reporter = require('./reporter')
 
 function errorHelp (e) {
   switch (e.code) {
@@ -24,8 +24,8 @@ function errorHelp (e) {
 }
 
 module.exports = function errorReporter (err, app) {
-  var c = reporter.color(app)
-  var help = errorHelp(err)
+  const c = reporter.color(app)
+  const help = errorHelp(err)
   return reporter.message([
     reporter.error(c, help.description),
     reporter.hint(c, help.hint)

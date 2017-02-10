@@ -1,29 +1,29 @@
 /* eslint-disable no-invalid-this */
 
-var MemoryStore = require('logux-core').MemoryStore
-var WebSocket = require('ws')
-var https = require('https')
-var http = require('http')
-var path = require('path')
-var Log = require('logux-core').Log
-var fs = require('fs')
+const MemoryStore = require('logux-core').MemoryStore
+const WebSocket = require('ws')
+const https = require('https')
+const http = require('http')
+const path = require('path')
+const Log = require('logux-core').Log
+const fs = require('fs')
 
-var BaseServer = require('../base-server')
-var promisify = require('../promisify')
+const BaseServer = require('../base-server')
+const promisify = require('../promisify')
 
-var lastPort = 9111
+let lastPort = 9111
 function uniqPort () {
   lastPort += 1
   return lastPort
 }
 
-var defaultOptions = {
+const defaultOptions = {
   subprotocol: '0.0.0',
   supports: '0.x'
 }
 
 function createServer (options) {
-  var app = new BaseServer(options || defaultOptions)
+  const app = new BaseServer(options || defaultOptions)
   app.auth(function () {
     return Promise.resolve(true)
   })
@@ -40,8 +40,8 @@ function createReporter (test) {
   })
 }
 
-var originArgv = process.argv
-var originEnv = process.env.NODE_ENV
+const originArgv = process.argv
+const originEnv = process.env.NODE_ENV
 afterEach(function () {
   process.argv = originArgv
   process.env.NODE_ENV = originEnv
@@ -49,9 +49,9 @@ afterEach(function () {
   delete process.env.LOGUX_PORT
   delete process.env.LOGUX_KEY
   delete process.env.LOGUX_CERT
-  var test = this
+  const test = this
 
-  var promise = test.app ? test.app.destroy() : Promise.resolve()
+  const promise = test.app ? test.app.destroy() : Promise.resolve()
   return promise.then(function () {
     if (test.server) {
       return promisify(function (done) {
@@ -64,12 +64,12 @@ afterEach(function () {
 })
 
 it('saves server options', function () {
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(app.options.supports).toEqual('0.x')
 })
 
 it('generates node ID', function () {
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(app.options.nodeId).toMatch(/server:[\w\d]+/)
   expect(app.options.nodeId).toEqual(app.log.nodeId)
 })
@@ -88,18 +88,18 @@ it('throws on missed supported subprotocols', function () {
 
 it('sets development environment by default', function () {
   delete process.env.NODE_ENV
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(app.env).toEqual('development')
 })
 
 it('takes environment from NODE_ENV', function () {
   process.env.NODE_ENV = 'production'
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(app.env).toEqual('production')
 })
 
 it('sets environment from user', function () {
-  var app = new BaseServer({
+  const app = new BaseServer({
     env: 'production',
     subprotocol: '0.0.0',
     supports: '0.x'
@@ -108,12 +108,12 @@ it('sets environment from user', function () {
 })
 
 it('uses cwd as default root', function () {
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(app.options.root).toEqual(process.cwd())
 })
 
 it('uses user root', function () {
-  var app = new BaseServer({
+  const app = new BaseServer({
     subprotocol: '0.0.0',
     supports: '0.x',
     root: '/a'
@@ -122,14 +122,14 @@ it('uses user root', function () {
 })
 
 it('creates log with default store', function () {
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(app.log instanceof Log).toBeTruthy()
   expect(app.log.store instanceof MemoryStore).toBeTruthy()
 })
 
 it('creates log with custom store', function () {
-  var store = new MemoryStore()
-  var app = new BaseServer({
+  const store = new MemoryStore()
+  const app = new BaseServer({
     subprotocol: '0.0.0',
     supports: '0.x',
     store: store
@@ -138,14 +138,14 @@ it('creates log with custom store', function () {
 })
 
 it('destroys application without runned server', function () {
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   return app.destroy().then(function () {
     return app.destroy()
   })
 })
 
 it('throws without authenticator', function () {
-  var app = new BaseServer(defaultOptions)
+  const app = new BaseServer(defaultOptions)
   expect(function () {
     app.listen()
   }).toThrowError(/authentication/)
@@ -170,14 +170,14 @@ it('uses 127.0.0.1 to bind server by default', function () {
 })
 
 it('uses cli args for options', function () {
-  var origArgv = process.argv
+  const origArgv = process.argv
 
-  var app = createServer()
+  const app = createServer()
 
-  var cliArgs = ['', '--port', '31337', '--host', '192.168.1.1']
+  const cliArgs = ['', '--port', '31337', '--host', '192.168.1.1']
 
   process.argv = process.argv.concat(cliArgs)
-  var options = app.loadOptions(process)
+  const options = app.loadOptions(process)
   process.argv = origArgv
 
   expect(options.host).toEqual('192.168.1.1')
@@ -190,23 +190,23 @@ it('uses env for options', function () {
   process.env.LOGUX_HOST = '127.0.1.1'
   process.env.LOGUX_PORT = 31337
 
-  var app = createServer()
-  var options = app.loadOptions(process)
+  const app = createServer()
+  const options = app.loadOptions(process)
 
   expect(options.host).toEqual('127.0.1.1')
   expect(options.port).toEqual(31337)
 })
 
 it('uses combined options', function () {
-  var certPath = path.join(__dirname, 'fixtures/cert.pem')
+  const certPath = path.join(__dirname, 'fixtures/cert.pem')
   process.env.LOGUX_CERT = certPath
 
-  var keyPath = path.join(__dirname, 'fixtures/key.pem')
-  var cliArgs = ['', '--key', keyPath]
+  const keyPath = path.join(__dirname, 'fixtures/key.pem')
+  const cliArgs = ['', '--key', keyPath]
   process.argv = process.argv.concat(cliArgs)
 
-  var app = createServer()
-  var options = app.loadOptions(process, {
+  const app = createServer()
+  const options = app.loadOptions(process, {
     host: '127.0.1.1',
     port: 31337
   })
@@ -218,14 +218,14 @@ it('uses combined options', function () {
 })
 
 it('uses arg, env, defaults options in given priority', function () {
-  var app = createServer()
+  const app = createServer()
 
-  var cliArgs = ['', '--port', '31337']
+  const cliArgs = ['', '--port', '31337']
   process.argv = process.argv.concat(cliArgs)
 
   process.env.LOGUX_PORT = 21337
 
-  var options = app.loadOptions(process, {
+  const options = app.loadOptions(process, {
     port: 11337
   })
 
@@ -233,7 +233,7 @@ it('uses arg, env, defaults options in given priority', function () {
 })
 
 it('throws a error on key without certificate', function () {
-  var app = createServer()
+  const app = createServer()
   expect(function () {
     app.listen({
       key: fs.readFileSync(path.join(__dirname, 'fixtures/key.pem'))
@@ -242,7 +242,7 @@ it('throws a error on key without certificate', function () {
 })
 
 it('throws a error on certificate without key', function () {
-  var app = createServer()
+  const app = createServer()
   expect(function () {
     app.listen({
       cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem'))
@@ -251,7 +251,7 @@ it('throws a error on certificate without key', function () {
 })
 
 it('uses HTTPS', function () {
-  var app = createServer()
+  const app = createServer()
   this.app = app
   return app.listen({
     port: 2002,
@@ -263,7 +263,7 @@ it('uses HTTPS', function () {
 })
 
 it('loads keys by absolute path', function () {
-  var app = createServer()
+  const app = createServer()
   this.app = app
   return app.listen({
     cert: path.join(__dirname, 'fixtures/cert.pem'),
@@ -274,7 +274,7 @@ it('loads keys by absolute path', function () {
 })
 
 it('loads keys by relative path', function () {
-  var app = createServer({
+  const app = createServer({
     subprotocol: '0.0.0',
     supports: '0.x',
     root: __dirname
@@ -289,9 +289,9 @@ it('loads keys by relative path', function () {
 })
 
 it('supports object in SSL key', function () {
-  var app = createServer()
+  const app = createServer()
   this.app = app
-  var key = fs.readFileSync(path.join(__dirname, 'fixtures/key.pem'))
+  const key = fs.readFileSync(path.join(__dirname, 'fixtures/key.pem'))
   return app.listen({
     cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem')),
     key: { pem: key }
@@ -302,9 +302,9 @@ it('supports object in SSL key', function () {
 
 it('reporters on start listening', function () {
   createReporter(this)
-  var test = this
+  const test = this
 
-  var promise = this.app.listen({ port: uniqPort() })
+  const promise = this.app.listen({ port: uniqPort() })
   expect(this.reports).toEqual([])
 
   return promise.then(function () {
@@ -315,7 +315,7 @@ it('reporters on start listening', function () {
 it('reporters on destroing', function () {
   createReporter(this)
 
-  var promise = this.app.destroy()
+  const promise = this.app.destroy()
   expect(this.reports).toEqual([['destroy', this.app]])
 
   return promise
@@ -323,12 +323,12 @@ it('reporters on destroing', function () {
 
 it('creates a client on connection', function () {
   createReporter(this)
-  var test = this
+  const test = this
 
   return test.app.listen({ port: uniqPort() }).then(function () {
     test.reports = []
 
-    var ws = new WebSocket('ws://localhost:' + test.app.listenOptions.port)
+    const ws = new WebSocket('ws://localhost:' + test.app.listenOptions.port)
     return new Promise(function (resolve, reject) {
       ws.onopen = resolve
       ws.onerror = reject
@@ -336,7 +336,7 @@ it('creates a client on connection', function () {
   }).then(function () {
     expect(Object.keys(test.app.clients).length).toBe(1)
 
-    var client = test.app.clients[1]
+    const client = test.app.clients[1]
     expect(client.remoteAddress).toEqual('127.0.0.1')
     expect(test.reports).toEqual([['connect', test.app, '127.0.0.1']])
   })
@@ -344,8 +344,8 @@ it('creates a client on connection', function () {
 
 it('accepts custom HTTP server', function () {
   createReporter(this)
-  var test = this
-  var port = uniqPort()
+  const test = this
+  const port = uniqPort()
   test.server = http.createServer()
 
   return promisify(function (done) {
@@ -355,7 +355,7 @@ it('accepts custom HTTP server', function () {
   }).then(function () {
     test.reports = []
 
-    var ws = new WebSocket('ws://localhost:' + port)
+    const ws = new WebSocket('ws://localhost:' + port)
     return new Promise(function (resolve, reject) {
       ws.onopen = resolve
       ws.onerror = reject
@@ -366,7 +366,7 @@ it('accepts custom HTTP server', function () {
 })
 
 it('disconnects on clients on destroy', function () {
-  var app = createServer()
+  const app = createServer()
   app.clients[1] = { destroy: jest.fn() }
   app.destroy()
   expect(app.clients[1].destroy).toBeCalled()

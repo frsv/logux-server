@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-var fs = require('fs')
-var path = require('path')
+const fs = require('fs')
+const path = require('path')
 
 function show (result) {
   Object.keys(result).sort().reverse().forEach(function (file) {
-    var test = file.replace(/\.test\.js\.snap$/, '')
+    const test = file.replace(/\.test\.js\.snap$/, '')
     result[file].split('exports[`').forEach(function (str) {
       if (str.trim().length === 0) return
-      var parts = str.replace(/"\s*`;\s*$/, '').split(/`] = `\s*"/)
+      const parts = str.replace(/"\s*`;\s*$/, '').split(/`] = `\s*"/)
       process.stdout.write(
         test + ' ' +
         parts[0].replace(/^test /, '').replace(/ 1$/, '') + ':\n\n')
@@ -19,11 +19,11 @@ function show (result) {
 
 fs.readdir(__dirname, function (err, list) {
   if (err) throw err
-  var snaps = list.filter(function (i) {
+  const snaps = list.filter(function (i) {
     return /\.snap$/.test(i)
   })
 
-  var result = { }
+  const result = { }
   snaps.forEach(function (file) {
     fs.readFile(path.join(__dirname, file), function (err2, content) {
       if (err2) throw err2

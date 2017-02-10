@@ -27,6 +27,7 @@
     "eslint-config-logux": "^4.0.0",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-es5": "^1.0.1",
+    "eslint-plugin-node": "^4.0.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
     "jest": "^18.1.0",
@@ -45,6 +46,9 @@
     "docs": "jsdoc --configure .jsdocrc *.js",
     "test": "jest --coverage && yarn run lint && yarn run spellcheck"
   },
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "jest": {
     "coverageThreshold": {
       "global": {
@@ -57,7 +61,7 @@
     ]
   },
   "eslintConfig": {
-    "extends": "eslint-config-logux"
+    "extends": "eslint-config-logux/node4"
   },
   "lint-staged": {
     "*.md": "yaspeller",

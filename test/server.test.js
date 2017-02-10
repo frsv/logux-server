@@ -1,7 +1,7 @@
-var spawn = require('child_process').spawn
-var path = require('path')
+const spawn = require('child_process').spawn
+const path = require('path')
 
-var DATE = /\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d/g
+const DATE = /\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d/g
 
 function wait (ms) {
   return new Promise(function (resolve) {
@@ -11,8 +11,8 @@ function wait (ms) {
 
 function start (name, args) {
   return new Promise(function (resolve) {
-    var server = spawn(path.join(__dirname, '/servers/', name), args)
-    var started = false
+    const server = spawn(path.join(__dirname, '/servers/', name), args)
+    let started = false
     function callback () {
       if (!started) {
         started = true
@@ -26,8 +26,8 @@ function start (name, args) {
 
 function test (name, args) {
   return new Promise(function (resolve) {
-    var out = ''
-    var server = spawn(path.join(__dirname, '/servers/', name), args)
+    let out = ''
+    const server = spawn(path.join(__dirname, '/servers/', name), args)
     server.stdout.on('data', function (chank) {
       out += chank
     })
@@ -35,7 +35,7 @@ function test (name, args) {
       out += chank
     })
     server.on('close', function (exitCode) {
-      var fixed = out.replace(DATE, '1970-01-01 00:00:00')
+      let fixed = out.replace(DATE, '1970-01-01 00:00:00')
                      .replace(/PID:(\s+)\d+/, 'PID:$121384')
       fixed = fixed.replace(/\r\v/g, '\n')
       resolve([fixed, exitCode])
@@ -48,8 +48,8 @@ function test (name, args) {
 
 function checkOut (name, args) {
   return test(name, args).then(function (result) {
-    var out = result[0]
-    var exit = result[1]
+    const out = result[0]
+    const exit = result[1]
 
     if (exit !== 0) {
       console.error(test + ' fall with:\n' + out)
@@ -61,8 +61,8 @@ function checkOut (name, args) {
 
 function checkError (name, args) {
   return test(name, args).then(function (result) {
-    var out = result[0]
-    var exit = result[1]
+    const out = result[0]
+    const exit = result[1]
     expect(exit).toEqual(1)
     expect(out).toMatchSnapshot()
   })

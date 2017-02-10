@@ -1,8 +1,8 @@
-var ServerSync = require('logux-sync').ServerSync
-var SyncError = require('logux-sync').SyncError
-var semver = require('semver')
+const ServerSync = require('logux-sync').ServerSync
+const SyncError = require('logux-sync').SyncError
+const semver = require('semver')
 
-var remoteAddress = require('./remote-address')
+const remoteAddress = require('./remote-address')
 
 /**
  * Logux client connected to server.
@@ -44,11 +44,11 @@ function Client (app, connection, key) {
    * @type {string}
    *
    * @example
-   * var clientCity = detectLocation(client.remoteAddress)
+   * const clientCity = detectLocation(client.remoteAddress)
    */
   this.remoteAddress = remoteAddress(this.connection.ws)
 
-  var credentials
+  let credentials
   if (this.app.env === 'development') {
     credentials = { env: 'development' }
   }
@@ -69,7 +69,7 @@ function Client (app, connection, key) {
     auth: this.auth.bind(this)
   })
 
-  var client = this
+  const client = this
 
   this.sync.catch(function (err) {
     client.app.reporter('syncError', client.app, client, err)
@@ -142,12 +142,12 @@ Client.prototype = {
      */
     this.nodeId = nodeId
 
-    var pos = nodeId.indexOf(':')
+    const pos = nodeId.indexOf(':')
     if (pos !== -1) {
       this.id = nodeId.slice(0, pos)
     }
 
-    var client = this
+    const client = this
     return this.app.authenticator(this.id, credentials, this)
       .then(function (user) {
         if (user) {
