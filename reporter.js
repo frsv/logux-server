@@ -36,7 +36,7 @@ module.exports = {
       current = fields[i][0].length + 2
       if (current > max) max = current
     }
-    return fields.map(function (field) {
+    return fields.map((field) => {
       const start = PADDING + rightPag(field[0] + ': ', max)
       if (field[0] === 'Node ID') {
         const pos = field[1].indexOf(':')
@@ -68,7 +68,7 @@ module.exports = {
   },
 
   hint: function hint (c, strings) {
-    return strings.map(function (i) {
+    return strings.map((i) => {
       return PADDING + i
     }).join(NEXT_LINE)
   },
@@ -94,7 +94,7 @@ module.exports = {
   prettyStackTrace: function prettyStackTrace (c, err, root) {
     if (root.slice(-1) !== path.sep) root += path.sep
 
-    return err.stack.split('\n').slice(1).map(function (i) {
+    return err.stack.split('\n').slice(1).map((i) => {
       i = i.replace(/^\s*/, PADDING)
       const match = i.match(/(\s+at [^(]+ \()([^)]+)\)/)
       if (!match || match[2].indexOf(root) !== 0) {
@@ -119,7 +119,7 @@ module.exports = {
   },
 
   message: function message (strings) {
-    return strings.filter(function (i) {
+    return strings.filter((i) => {
       return i !== ''
     }).join(NEXT_LINE) + SEPARATOR
   },

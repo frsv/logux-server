@@ -60,7 +60,7 @@ function Server (options) {
 
   function onError (e) {
     app.reporter('runtimeError', app, undefined, e)
-    app.destroy().then(function () {
+    app.destroy().then(() => {
       process.exit(1)
     })
   }
@@ -68,13 +68,13 @@ function Server (options) {
   process.on('unhandledRejection', onError)
 
   function onExit () {
-    app.destroy().then(function () {
+    app.destroy().then(() => {
       process.exit(0)
     })
   }
   process.on('SIGINT', onExit)
 
-  this.unbind.push(function () {
+  this.unbind.push(() => {
     process.removeListener('SIGINT', onExit)
   })
 }
@@ -84,7 +84,7 @@ Server.prototype = {
   listen: function listen () {
     const app = this
     const origin = BaseServer.prototype.listen
-    return origin.apply(this, arguments).catch(function (e) {
+    return origin.apply(this, arguments).catch((e) => {
       process.stderr.write(errorReporter(e, app))
       process.exit(1)
     })

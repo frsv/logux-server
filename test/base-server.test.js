@@ -24,7 +24,7 @@ const defaultOptions = {
 
 function createServer (options) {
   const app = new BaseServer(options || defaultOptions)
-  app.auth(function () {
+  app.auth(() => {
     return Promise.resolve(true)
   })
   return app
@@ -35,7 +35,7 @@ function createReporter (test) {
   test.app = new BaseServer(defaultOptions, function () {
     test.reports.push(Array.prototype.slice.call(arguments, 0))
   })
-  test.app.auth(function () {
+  test.app.auth(() => {
     return Promise.resolve(true)
   })
 }
@@ -52,9 +52,9 @@ afterEach(function () {
   const test = this
 
   const promise = test.app ? test.app.destroy() : Promise.resolve()
-  return promise.then(function () {
+  return promise.then(() => {
     if (test.server) {
-      return promisify(function (done) {
+      return promisify((done) => {
         test.server.close(done)
       })
     } else {
@@ -63,42 +63,42 @@ afterEach(function () {
   })
 })
 
-it('saves server options', function () {
+it('saves server options', () => {
   const app = new BaseServer(defaultOptions)
   expect(app.options.supports).toEqual('0.x')
 })
 
-it('generates node ID', function () {
+it('generates node ID', () => {
   const app = new BaseServer(defaultOptions)
   expect(app.options.nodeId).toMatch(/server:[\w\d]+/)
   expect(app.options.nodeId).toEqual(app.log.nodeId)
 })
 
-it('throws on missed subprotocol', function () {
-  expect(function () {
+it('throws on missed subprotocol', () => {
+  expect(() => {
     new BaseServer({ })
   }).toThrowError(/subprotocol version/)
 })
 
-it('throws on missed supported subprotocols', function () {
-  expect(function () {
+it('throws on missed supported subprotocols', () => {
+  expect(() => {
     new BaseServer({ subprotocol: '0.0.0' })
   }).toThrowError(/supported subprotocol/)
 })
 
-it('sets development environment by default', function () {
+it('sets development environment by default', () => {
   delete process.env.NODE_ENV
   const app = new BaseServer(defaultOptions)
   expect(app.env).toEqual('development')
 })
 
-it('takes environment from NODE_ENV', function () {
+it('takes environment from NODE_ENV', () => {
   process.env.NODE_ENV = 'production'
   const app = new BaseServer(defaultOptions)
   expect(app.env).toEqual('production')
 })
 
-it('sets environment from user', function () {
+it('sets environment from user', () => {
   const app = new BaseServer({
     env: 'production',
     subprotocol: '0.0.0',
@@ -107,12 +107,12 @@ it('sets environment from user', function () {
   expect(app.env).toEqual('production')
 })
 
-it('uses cwd as default root', function () {
+it('uses cwd as default root', () => {
   const app = new BaseServer(defaultOptions)
   expect(app.options.root).toEqual(process.cwd())
 })
 
-it('uses user root', function () {
+it('uses user root', () => {
   const app = new BaseServer({
     subprotocol: '0.0.0',
     supports: '0.x',
@@ -121,13 +121,13 @@ it('uses user root', function () {
   expect(app.options.root).toEqual('/a')
 })
 
-it('creates log with default store', function () {
+it('creates log with default store', () => {
   const app = new BaseServer(defaultOptions)
   expect(app.log instanceof Log).toBeTruthy()
   expect(app.log.store instanceof MemoryStore).toBeTruthy()
 })
 
-it('creates log with custom store', function () {
+it('creates log with custom store', () => {
   const store = new MemoryStore()
   const app = new BaseServer({
     subprotocol: '0.0.0',
@@ -137,16 +137,16 @@ it('creates log with custom store', function () {
   expect(app.log.store).toBe(store)
 })
 
-it('destroys application without runned server', function () {
+it('destroys application without runned server', () => {
   const app = new BaseServer(defaultOptions)
-  return app.destroy().then(function () {
+  return app.destroy().then(() => {
     return app.destroy()
   })
 })
 
-it('throws without authenticator', function () {
+it('throws without authenticator', () => {
   const app = new BaseServer(defaultOptions)
-  expect(function () {
+  expect(() => {
     app.listen()
   }).toThrowError(/authentication/)
 })
@@ -169,7 +169,7 @@ it('uses 127.0.0.1 to bind server by default', function () {
   expect(this.app.listenOptions.host).toEqual('127.0.0.1')
 })
 
-it('uses cli args for options', function () {
+it('uses cli args for options', () => {
   const origArgv = process.argv
 
   const app = createServer()
@@ -186,7 +186,7 @@ it('uses cli args for options', function () {
   expect(options.key).toBeUndefined()
 })
 
-it('uses env for options', function () {
+it('uses env for options', () => {
   process.env.LOGUX_HOST = '127.0.1.1'
   process.env.LOGUX_PORT = 31337
 
@@ -197,7 +197,7 @@ it('uses env for options', function () {
   expect(options.port).toEqual(31337)
 })
 
-it('uses combined options', function () {
+it('uses combined options', () => {
   const certPath = path.join(__dirname, 'fixtures/cert.pem')
   process.env.LOGUX_CERT = certPath
 
@@ -217,7 +217,7 @@ it('uses combined options', function () {
   expect(options.key).toEqual(keyPath)
 })
 
-it('uses arg, env, defaults options in given priority', function () {
+it('uses arg, env, defaults options in given priority', () => {
   const app = createServer()
 
   const cliArgs = ['', '--port', '31337']
@@ -232,18 +232,18 @@ it('uses arg, env, defaults options in given priority', function () {
   expect(options.port).toEqual(31337)
 })
 
-it('throws a error on key without certificate', function () {
+it('throws a error on key without certificate', () => {
   const app = createServer()
-  expect(function () {
+  expect(() => {
     app.listen({
       key: fs.readFileSync(path.join(__dirname, 'fixtures/key.pem'))
     })
   }).toThrowError(/set cert option/)
 })
 
-it('throws a error on certificate without key', function () {
+it('throws a error on certificate without key', () => {
   const app = createServer()
-  expect(function () {
+  expect(() => {
     app.listen({
       cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem'))
     })
@@ -257,7 +257,7 @@ it('uses HTTPS', function () {
     port: 2002,
     cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem')),
     key: fs.readFileSync(path.join(__dirname, 'fixtures/key.pem'))
-  }).then(function () {
+  }).then(() => {
     expect(app.http instanceof https.Server).toBeTruthy()
   })
 })
@@ -268,7 +268,7 @@ it('loads keys by absolute path', function () {
   return app.listen({
     cert: path.join(__dirname, 'fixtures/cert.pem'),
     key: path.join(__dirname, 'fixtures/key.pem')
-  }).then(function () {
+  }).then(() => {
     expect(app.http instanceof https.Server).toBeTruthy()
   })
 })
@@ -283,7 +283,7 @@ it('loads keys by relative path', function () {
   return app.listen({
     cert: 'fixtures/cert.pem',
     key: 'fixtures/key.pem'
-  }).then(function () {
+  }).then(() => {
     expect(app.http instanceof https.Server).toBeTruthy()
   })
 })
@@ -295,7 +295,7 @@ it('supports object in SSL key', function () {
   return app.listen({
     cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem')),
     key: { pem: key }
-  }).then(function () {
+  }).then(() => {
     expect(app.http instanceof https.Server).toBeTruthy()
   })
 })
@@ -307,7 +307,7 @@ it('reporters on start listening', function () {
   const promise = this.app.listen({ port: uniqPort() })
   expect(this.reports).toEqual([])
 
-  return promise.then(function () {
+  return promise.then(() => {
     expect(test.reports).toEqual([['listen', test.app]])
   })
 })
@@ -325,15 +325,15 @@ it('creates a client on connection', function () {
   createReporter(this)
   const test = this
 
-  return test.app.listen({ port: uniqPort() }).then(function () {
+  return test.app.listen({ port: uniqPort() }).then(() => {
     test.reports = []
 
     const ws = new WebSocket('ws://localhost:' + test.app.listenOptions.port)
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       ws.onopen = resolve
       ws.onerror = reject
     })
-  }).then(function () {
+  }).then(() => {
     expect(Object.keys(test.app.clients).length).toBe(1)
 
     const client = test.app.clients[1]
@@ -348,24 +348,24 @@ it('accepts custom HTTP server', function () {
   const port = uniqPort()
   test.server = http.createServer()
 
-  return promisify(function (done) {
+  return promisify((done) => {
     test.server.listen(port, done)
-  }).then(function () {
+  }).then(() => {
     return test.app.listen({ server: test.server })
-  }).then(function () {
+  }).then(() => {
     test.reports = []
 
     const ws = new WebSocket('ws://localhost:' + port)
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       ws.onopen = resolve
       ws.onerror = reject
     })
-  }).then(function () {
+  }).then(() => {
     expect(Object.keys(test.app.clients).length).toBe(1)
   })
 })
 
-it('disconnects on clients on destroy', function () {
+it('disconnects on clients on destroy', () => {
   const app = createServer()
   app.clients[1] = { destroy: jest.fn() }
   app.destroy()
