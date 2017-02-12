@@ -54,7 +54,7 @@ afterEach(function () {
   const promise = test.app ? test.app.destroy() : Promise.resolve()
   return promise.then(() => {
     if (test.server) {
-      return promisify((done) => {
+      return promisify(done => {
         test.server.close(done)
       })
     } else {
@@ -348,7 +348,7 @@ it('accepts custom HTTP server', function () {
   const port = uniqPort()
   test.server = http.createServer()
 
-  return promisify((done) => {
+  return promisify(done => {
     test.server.listen(port, done)
   }).then(() => {
     return test.app.listen({ server: test.server })

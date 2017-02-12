@@ -4,13 +4,13 @@ const path = require('path')
 const DATE = /\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d/g
 
 function wait (ms) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(resolve, ms)
   })
 }
 
 function start (name, args) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const server = spawn(path.join(__dirname, '/servers/', name), args)
     let started = false
     function callback () {
@@ -25,16 +25,16 @@ function start (name, args) {
 }
 
 function test (name, args) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let out = ''
     const server = spawn(path.join(__dirname, '/servers/', name), args)
-    server.stdout.on('data', (chank) => {
+    server.stdout.on('data', chank => {
       out += chank
     })
-    server.stderr.on('data', (chank) => {
+    server.stderr.on('data', chank => {
       out += chank
     })
-    server.on('close', (exitCode) => {
+    server.on('close', exitCode => {
       let fixed = out.replace(DATE, '1970-01-01 00:00:00')
                      .replace(/PID:(\s+)\d+/, 'PID:$121384')
       fixed = fixed.replace(/\r\v/g, '\n')
@@ -47,7 +47,7 @@ function test (name, args) {
 }
 
 function checkOut (name, args) {
-  return test(name, args).then((result) => {
+  return test(name, args).then(result => {
     const out = result[0]
     const exit = result[1]
 
@@ -60,7 +60,7 @@ function checkOut (name, args) {
 }
 
 function checkError (name, args) {
-  return test(name, args).then((result) => {
+  return test(name, args).then(result => {
     const out = result[0]
     const exit = result[1]
     expect(exit).toEqual(1)
@@ -77,7 +77,7 @@ it('destroys everything on exit', () => {
 })
 
 it('reports unbind', () => {
-  return test('unbind.js').then((result) => {
+  return test('unbind.js').then(result => {
     expect(result[0]).toMatchSnapshot()
   })
 })
@@ -102,7 +102,7 @@ it('shows help', () => {
 it('shows help about port in use', () => {
   return start('eaddrinuse.js').then(() => {
     return test('eaddrinuse.js')
-  }).then((result) => {
+  }).then(result => {
     expect(result[0]).toMatchSnapshot()
   })
 })
