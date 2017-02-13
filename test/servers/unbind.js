@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const Server = require('../../server')
+var Server = require('../../server')
 
-const app = new Server({
+var app = new Server({
   nodeId: 'server',
   subprotocol: '1.0.0',
   supports: '1.x'
@@ -10,4 +10,4 @@ const app = new Server({
 
 app.destroy()
 
-setTimeout(function () { }, 10000)
+setTimeout(() => { }, 10000)
