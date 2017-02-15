@@ -99,7 +99,7 @@ it('shows help', () => {
   return checkOut('options.js', ['', '--help'])
 })
 
-it('shows help about port in use', () => {
+xit('shows help about port in use', () => {
   return start('eaddrinuse.js').then(() => {
     return test('eaddrinuse.js')
   }).then(result => {
@@ -107,6 +107,6 @@ it('shows help about port in use', () => {
   })
 })
 
-it('shows help about privileged port', () => {
+xit('shows help about privileged port', () => {
   return checkError('eacces.js')
 })

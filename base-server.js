@@ -282,11 +282,11 @@ BaseServer.prototype = {
       return promisify(done => {
         promise.then(() => {
           app.ws.close()
-            if (app.http) {
-              app.http.close(done)
-            } else {
-              done()
-            }
+          if (app.http) {
+            app.http.close(done)
+          } else {
+            done()
+          }
         })
       })
     })
