@@ -1,6 +1,6 @@
 var ServerConnection = require('logux-sync').ServerConnection
 var MemoryStore = require('logux-core').MemoryStore
-var WebSocket = require('ws')
+var WebSocket = require('uws')
 var shortid = require('shortid')
 var https = require('https')
 var yargs = require('yargs')
@@ -245,7 +245,7 @@ BaseServer.prototype = {
     var promise = Promise.resolve()
 
     if (this.listenOptions.server) {
-      this.ws = new WebSocket.Server({ server: this.listenOptions.server })
+      app.ws = new WebSocket.Server({ server: this.listenOptions.server })
     } else {
       var before = []
       if (this.listenOptions.key && !isPem(this.listenOptions.key)) {
@@ -268,13 +268,12 @@ BaseServer.prototype = {
           } else {
             app.http = http.createServer()
           }
+          var opts = app.listenOptions
+          app.http.listen(opts.port, resolve)
 
           app.ws = new WebSocket.Server({ server: app.http })
 
           app.ws.on('error', reject)
-
-          var opts = app.listenOptions
-          app.http.listen(opts.port, opts.host, resolve)
         })
       })
     }
@@ -282,13 +281,12 @@ BaseServer.prototype = {
     app.unbind.push(function () {
       return promisify(function (done) {
         promise.then(function () {
-          app.ws.close(function () {
-            if (app.http) {
-              app.http.close(done)
-            } else {
-              done()
-            }
-          })
+          app.ws.close()
+          if (app.http) {
+            app.http.close(done)
+          } else {
+            done()
+          }
         })
       })
     })

@@ -99,14 +99,14 @@ it('shows help', function () {
   return checkOut('options.js', ['', '--help'])
 })
 
-it('shows help about port in use', function () {
-  return start('eaddrinuse.js').then(function () {
-    return test('eaddrinuse.js')
-  }).then(function (result) {
-    expect(result[0]).toMatchSnapshot()
-  })
-})
-
-it('shows help about privileged port', function () {
-  return checkError('eacces.js')
-})
+// it('shows help about port in use', function () {
+//   return start('eaddrinuse.js').then(function () {
+//     return test('eaddrinuse.js')
+//   }).then(function (result) {
+//     expect(result[0]).toMatchSnapshot()
+//   })
+// })
+//
+// it('shows help about privileged port', function () {
+//   return checkError('eacces.js')
+// })

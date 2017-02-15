@@ -27,7 +27,7 @@ afterAll(function () {
 })
 
 it('handles EACCESS error', function () {
-  expect(errorHelperOut({code: 'EACCES'}, app)).toMatchSnapshot()
+  expect(errorHelperOut({ code: 'EACCES' }, app)).toMatchSnapshot()
 })
 
 it('handles error in production', function () {
@@ -40,7 +40,7 @@ it('handles error in production', function () {
   })
   http.listenOptions = { host: '127.0.0.1', port: 1000 }
 
-  expect(errorHelperOut({code: 'EACCES', port: 1000}, http)).toMatchSnapshot()
+  expect(errorHelperOut({ code: 'EACCES', port: 1000 }, http)).toMatchSnapshot()
 })
 
 it('handles EADDRINUSE error', function () {
